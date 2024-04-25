@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -10,7 +12,6 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-
   LatLng _currentPos = const LatLng(0, 0);
 
   bool _screenShouldLoad = false;
@@ -46,17 +47,30 @@ class _MapScreenState extends State<MapScreen> {
 
   Future<void> _getUpdatedLocation() async {
     await _takePermission();
-    Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.best,
-        timeLimit: Duration(seconds: 10),
-      ),
-    ).listen((position) async {
-      _currentPos = LatLng(position.latitude, position.longitude);
+
+    // Geolocator.getPositionStream(
+    //   locationSettings: const LocationSettings(
+    //     accuracy: LocationAccuracy.best,
+    //     timeLimit: Duration(seconds: 10),
+    //   ),
+    // ).listen((position) async {
+    //   _currentPos = LatLng(position.latitude, position.longitude);
+    //
+    //   _allLocationTraveled.insert(0, _currentPos);
+    //
+    //   await googleMapController.moveCamera(CameraUpdate.newLatLng(_currentPos));
+    //
+    //   setState(() {});
+    // });
+
+    Timer.periodic(const Duration(seconds: 10), (timer) async {
+      await _takePermission();
+
+      final curPos = await Geolocator.getCurrentPosition();
+
+      _currentPos = LatLng(curPos.latitude, curPos.longitude);
 
       _allLocationTraveled.insert(0, _currentPos);
-
-      await googleMapController.moveCamera(CameraUpdate.newLatLng(_currentPos));
 
       setState(() {});
     });
