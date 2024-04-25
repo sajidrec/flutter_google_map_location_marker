@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_google_map_location_marker/presentation/utility/map_screen_utils.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -26,27 +27,8 @@ class _MapScreenState extends State<MapScreen> {
     _getCurrentPosition();
   }
 
-  Future<void> _takePermission() async {
-    LocationPermission locationPermissionStatus =
-        await Geolocator.checkPermission();
-    if (locationPermissionStatus == LocationPermission.denied) {
-      await Geolocator.requestPermission();
-      locationPermissionStatus = await Geolocator.checkPermission();
-      if (locationPermissionStatus == LocationPermission.denied) {
-        _takePermission();
-      }
-    } else if (locationPermissionStatus == LocationPermission.deniedForever) {
-      await Geolocator.openLocationSettings();
-      locationPermissionStatus = await Geolocator.checkPermission();
-      if (locationPermissionStatus != LocationPermission.always &&
-          locationPermissionStatus != LocationPermission.whileInUse) {
-        _takePermission();
-      }
-    }
-  }
-
   Future<void> _getUpdatedLocation() async {
-    await _takePermission();
+    await takePermission();
 
     // Geolocator.getPositionStream(
     //   locationSettings: const LocationSettings(
@@ -64,13 +46,15 @@ class _MapScreenState extends State<MapScreen> {
     // });
 
     Timer.periodic(const Duration(seconds: 10), (timer) async {
-      await _takePermission();
+      await takePermission();
 
       final curPos = await Geolocator.getCurrentPosition();
 
       _currentPos = LatLng(curPos.latitude, curPos.longitude);
 
       _allLocationTraveled.insert(0, _currentPos);
+
+      await googleMapController.moveCamera(CameraUpdate.newLatLng(_currentPos));
 
       setState(() {});
     });
@@ -80,7 +64,7 @@ class _MapScreenState extends State<MapScreen> {
     _screenShouldLoad = false;
     setState(() {});
 
-    await _takePermission();
+    await takePermission();
 
     final curPos = await Geolocator.getCurrentPosition();
 
