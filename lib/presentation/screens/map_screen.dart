@@ -93,7 +93,7 @@ class _MapScreenState extends State<MapScreen> {
               _getUpdatedLocation();
             },
             initialCameraPosition:
-                CameraPosition(target: _currentPos, zoom: 16),
+                CameraPosition(target: _currentPos, zoom: 17),
             markers: {
               Marker(
                 markerId: const MarkerId("currentPosition"),
@@ -101,7 +101,7 @@ class _MapScreenState extends State<MapScreen> {
                 infoWindow: InfoWindow(
                     title: "My current location",
                     snippet:
-                        "latitude ${_currentPos.latitude} and longitude ${_currentPos.longitude}"),
+                        "${_currentPos.latitude} , ${_currentPos.longitude}"),
               ),
             },
             polylines: {
