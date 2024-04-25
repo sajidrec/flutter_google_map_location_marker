@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_google_map_location_marker/presentation/utility/map_screen_utils.dart';
+import 'package:flutter_google_map_location_marker/presentation/widget/create_appbar.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -79,6 +80,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: createAppbar("Real-Time Location Tracker"),
       body: SafeArea(
         child: Visibility(
           visible: _screenShouldLoad && _currentPos != const LatLng(0, 0),
